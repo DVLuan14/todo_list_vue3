@@ -28,7 +28,7 @@
       </table>
     </div>
   </div>
-  <AddNewItem :visibleModal="showModalAdd" :dataProp="selectedProduct" @createItem="handleCreate()" @closeModal="handleCloseModal()"></AddNewItem>
+  <AddNewItem :visibleModal="showModalAdd" :dataProp="selectedProduct" @createItem="handleCreate" @closeModal="handleCloseModal()"></AddNewItem>
   <ModalInforItem :visibleModal="showModalDetail" :dataProp="selectedItem" @switchEditFromDetail="handleSwitchEdit()" @closeModal="handleCloseEdit()"></ModalInforItem>
 </template>
 <script setup>
@@ -79,8 +79,22 @@ const deleteItem = (id) => {
   }
 }
 const handleCreate = (data) => {
-  console.log('form submit', data); 
-}
+  console.log('form submit', data);
+  if (data.id) {
+    const index = dataList.findIndex(p => p.id === data.id);
+    if (index !== -1) {
+      // edit
+      dataList[index] = { ...data };
+      console.log('Đã cập nhật sản phẩm:', data);
+    }
+  } else {
+    // create
+    const id = dataList.length ? Math.max(...dataList.map(p => p.id)) + 1 : 1;
+    dataList.push({ id, ...data });
+    console.log('Đã tạo sản phẩm mới:', data);
+  }
+  showModalAdd.value = false;
+};
 const handleSwitchEdit = (data) => {
   console.log('detail to edit', data); 
 }
